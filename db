@@ -1,0 +1,15 @@
+class DatabaseConfig {
+  static const String host = 'yourdomain.com';
+  static const String database = 'your_database';
+  static const String username = 'your_username';
+  static const String password = 'your_password';
+  
+  static String get connectionUrl => 'https://$host/api/';
+  
+  static Map<String, String> get dbCredentials => {
+    'host': host,
+    'database': database,
+    'username': username,
+    'password': password,
+  };
+}
