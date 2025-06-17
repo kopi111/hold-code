@@ -1,0 +1,32 @@
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    employment_number VARCHAR(50) NOT NULL UNIQUE,
+    regulation_number VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    attempts INT DEFAULT 3,
+    last_attempt DATETIME DEFAULT NULL,
+    is_first_login BOOLEAN DEFAULT TRUE,
+    password_changed_at DATETIME DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE personnel (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    employment_number VARCHAR(50) NOT NULL UNIQUE,
+    rank VARCHAR(50) NOT NULL,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    department VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (employment_number) REFERENCES users(employment_number)
+);
+
+CREATE TABLE password_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    employment_number VARCHAR(50) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    changed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (employment_number) REFERENCES users(employment_number)
+);
