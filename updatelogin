@@ -1,0 +1,37 @@
+Future<void> _handleLogin() async {
+  if (!_formKey.currentState!.validate()) return;
+  
+  setState(() {
+    _isLoading = true;
+    _errorMessage = '';
+  });
+
+  try {
+    final response = await _authService.login(
+      _regulationNumberController.text.trim(),
+      _passwordController.text.trim(),
+    );
+
+    if (response.success) {
+      // Access user data through response.user
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HomeScreen(user: response.user!),
+        ),
+      );
+    } else {
+      setState(() {
+        _errorMessage = response.message;
+      });
+    }
+  } catch (e) {
+    setState(() {
+      _errorMessage = e.toString().replaceAll('Exception: ', '');
+    });
+  } finally {
+    setState(() {
+      _isLoading = false;
+    });
+  }
+}
