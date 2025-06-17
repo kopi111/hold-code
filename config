@@ -1,0 +1,41 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'user_model.dart';
+import 'database_config.dart';
+
+class AuthService {
+  Future<LoginResponse> login(String regulationNumber, String password) async {
+    final url = Uri.parse('${DatabaseConfig.connectionUrl}login.php');
+    
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'regulation_number': regulationNumber,
+          'password': password,
+          'db_credentials': DatabaseConfig.dbCredentials,
+        }),
+      );
+      
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        
+        if (data['success'] == true) {
+          return LoginResponse.success(
+            user: User.fromJson(data['user']),
+            message: data['message'] ?? 'Login successful',
+          );
+        } else {
+          return LoginResponse.failure(
+            message: data['message'] ?? 'Login failed',
+          );
+        }
+      } else {
+        throw Exception('Server responded with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Login failed: ${e.toString()}');
+    }
+  }
+}
