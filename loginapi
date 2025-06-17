@@ -1,0 +1,69 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'user_model.dart';
+
+class AuthService {
+  static const String _baseUrl = 'https://yourdomain.com/api/';
+  
+  Future<LoginResponse> login(String regulationNumber, String password) async {
+    final url = Uri.parse('${_baseUrl}login.php');
+    
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'regulation_number': regulationNumber,
+          'password': password,
+        }),
+      );
+      
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        
+        if (data['success'] == true) {
+          return LoginResponse.success(
+            user: User.fromJson(data['user']),
+            message: data['message'] ?? 'Login successful',
+          );
+        } else {
+          return LoginResponse.failure(
+            message: data['message'] ?? 'Login failed',
+          );
+        }
+      } else {
+        throw Exception('Server responded with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Login failed: ${e.toString()}');
+    }
+  }
+}
+
+class LoginResponse {
+  final bool success;
+  final String message;
+  final User? user;
+
+  LoginResponse({
+    required this.success,
+    required this.message,
+    this.user,
+  });
+
+  factory LoginResponse.success({required User user, String? message}) {
+    return LoginResponse(
+      success: true,
+      message: message ?? 'Login successful',
+      user: user,
+    );
+  }
+
+  factory LoginResponse.failure({required String message}) {
+    return LoginResponse(
+      success: false,
+      message: message,
+      user: null,
+    );
+  }
+}
