@@ -1,0 +1,4 @@
+class ApiConfig {
+  static const String baseUrl = 'https://yourdomain.com/api';
+  static String get loginUrl => '$baseUrl/login.php';
+}
