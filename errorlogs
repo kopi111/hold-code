@@ -1,0 +1,3 @@
+error_log("Full POST data: " . print_r($_POST, true));
+error_log("Full input stream: " . file_get_contents('php://input'));
+error_log("Request method: " . $_SERVER['REQUEST_METHOD']);
